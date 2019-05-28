@@ -8,7 +8,7 @@ SHELL = /bin/sh
 #In case different make programs have different suffix lists and implicit rules
 #Done to improve portability. First line clears list, second adds only suffixes
 #needed for this particular makefile.
-
+.SUFFIXES:
 .SUFFIXES: .c .o .cpp .hpp .s
 
 #MACROS
