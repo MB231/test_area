@@ -9,7 +9,7 @@ SHELL = /bin/sh
 #Done to improve portability. First line clears list, second adds only suffixes
 #needed for this particular makefile.
 .SUFFIXES:
-.SUFFIXES: .c .o .cpp .hpp .s
+.SUFFIXES: .c .o .cpp .hpp .s .h
 
 #MACROS
 
@@ -60,7 +60,7 @@ CPP = g++ -std=c++11
 CPPFLAGS ?= $(CFLAGS) -MMD -MP
 
 #INCLUDES
-LIB_FLAGS = #-l
+LIB_FLAGS = -lCppUnit -lCppUnitRunner
 #gets list of directory names in src directory
 INC_DIRS :=$(shell find $(SRC_DIR) -type d)
 #Adds the -I flag to the INC_DIRS list so var is not so nested and = is not need

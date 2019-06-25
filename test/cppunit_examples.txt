@@ -1,0 +1,244 @@
+#include <complex>
+
+//SIMPLE TEST
+
+//TestCase is the base class for tests.
+//must inherit TestCase for all test classes and override the method runTest()
+class ComplexNumberTest : public CppUnit::TestCase { 
+public: 
+  ComplexNumberTest( std::string name ) : CppUnit::TestCase( name ) {}
+  
+  void runTest() {
+    CPPUNIT_ASSERT( Complex (10, 1) == Complex (10, 1) );
+    CPPUNIT_ASSERT( !(Complex (1, 1) == Complex (2, 2)) );
+  }
+};
+
+//WITH FIXTURES
+
+//fixture ==known set of objects that serves as a base for a set of test cases.
+//Fixtures provide setup/teardown functions in addition to test cases that use them
+//keeping them together
+class ComplexNumberTest : public CppUnit::TestFixture {
+private:
+  Complex *m_10_1, *m_1_1, *m_11_2; //variables to be used in test
+protected:
+  void setUp()    //overridden method to initialize variables
+  {
+    m_10_1 = new Complex( 10, 1 );
+    m_1_1 = new Complex( 1, 1 );
+    m_11_2 = new Complex( 11, 2 );  
+  }
+
+  void tearDown()   //overridden method to release any allocated resources
+  {
+    delete m_10_1;
+    delete m_1_1;
+    delete m_11_2;
+  }
+    void testEquality()  //test fixtures use test case methods in their class invoked by TestCaller which run the method
+  {
+    CPPUNIT_ASSERT( *m_10_1 == *m_10_1 );
+    CPPUNIT_ASSERT( !(*m_10_1 == *m_11_2) );
+  }
+
+  void testAddition()  //Another test case test method == test case in this document
+  {
+    CPPUNIT_ASSERT( *m_10_1 + *m_1_1 == *m_11_2 );
+  }
+};
+
+//Example TestCaller
+//second argument is the address to the method. As shown will not display result
+//Usually organized into TestRunner which uses the TestCaller to run the test methods AND display results
+CppUnit::TestCaller<ComplexNumberTest> test( "testEquality", 
+                                             &ComplexNumberTest::testEquality );
+//Above creates a TestCaller object and below declares and defines a result
+CppUnit::TestResult result;
+test.run( &result );  //run the test and place the result in result variable
+
+
+
+//WITH A TEST SUITE
+//Test suites run a collection of tests together
+CppUnit::TestSuite suite;  //create suite object
+CppUnit::TestResult result;  //Var to hold result
+suite.addTest( new CppUnit::TestCaller<ComplexNumberTest>( //adding tests to suite object
+                       "testEquality", 
+                       &ComplexNumberTest::testEquality ) );
+suite.addTest( new CppUnit::TestCaller<ComplexNumberTest>(
+                       "testAddition", 
+                       &ComplexNumberTest::testAddition ) );
+suite.run( &result ); //run suite and give result in var result
+
+//Tests suite of suites example
+/CppUnit::TestSuite suite;
+CppUnit::TestResult result;
+suite.addTest( ComplexNumberTest::suite() );  //2 suites are added to the suite object instead of test cases
+suite.addTest( SurrealNumberTest::suite() );
+suite.run( &result );
+
+
+//TESTRUNNER
+//Runs tests (through suites usually) and collects the results
+//Make the suite is accessable to TestRunner program by adding public method
+class ComplexNumberTest : public CppUnit::TestFixture {
+//NEW STUFF
+public: 
+  static CppUnit::Test *suite()
+  {
+    CppUnit::TestSuite *suiteOfTests = new CppUnit::TestSuite( "ComplexNumberTest" );
+    suiteOfTests->addTest( new CppUnit::TestCaller<ComplexNumberTest>( 
+                                   "testEquality", 
+                                   &ComplexNumberTest::testEquality ) );
+    suiteOfTests->addTest( new CppUnit::TestCaller<ComplexNumberTest>(
+                                   "testAddition",
+                                   &ComplexNumberTest::testAddition ) );
+    return suiteOfTests;
+  }
+//same as with fixtures above
+private:
+  Complex *m_10_1, *m_1_1, *m_11_2; //variables to be used in test
+protected:
+  void setUp()    //overridden method to initialize variables
+  {
+    m_10_1 = new Complex( 10, 1 );
+    m_1_1 = new Complex( 1, 1 );
+    m_11_2 = new Complex( 11, 2 );  
+  }
+
+  void tearDown()   //overridden method to release any allocated resources
+  {
+    delete m_10_1;
+    delete m_1_1;
+    delete m_11_2;
+  }
+    void testEquality()  //test fixtures use test case methods in their class invoked by TestCaller which run the method
+  {
+    CPPUNIT_ASSERT( *m_10_1 == *m_10_1 );
+    CPPUNIT_ASSERT( !(*m_10_1 == *m_11_2) );
+  }
+
+  void testAddition()  //Another test case test method == test case in this document
+  {
+    CPPUNIT_ASSERT( *m_10_1 + *m_1_1 == *m_11_2 );
+  }
+};
+
+//Run in main.cpp using code below
+#include <cppunit/ui/text/TestRunner.h>
+#include "ExampleTestCase.h" //test suite headers must be added in this method
+#include "ComplexNumberTest.h"
+
+int main( int argc, char **argv)
+{
+  CppUnit::TextUi::TestRunner runner;
+  runner.addTest( ExampleTestCase::suite() );  //simple test from top
+  runner.addTest( ComplexNumberTest::suite() ); //current complex test we've been building
+  runner.run();
+  return 0;
+}
+
+
+//HELPER MACROs
+//Aids in quick creation of suite methods
+//
+
+#include <cppunit/extensions/HelperMacros.h>
+
+class ComplexNumberTest : public CppUnit::TestFixture  {
+    CPPUNIT_TEST_SUITE( ComplexNumberTest ); //declaration of suire passing class name to macro
+    //Suite is created and static suite() method is named after class name
+    CPPUNIT_TEST( testEquality ); //declare each test case of the fixture
+    CPPUNIT_TEST( testAddition );
+    CPPUNIT_TEST_SUITE_END();  //End of suite declaration
+    //now a method with following signature created: static CppUnit::TestSuite *suite();
+//Rest of test fixture is unchanged
+private:
+  Complex *m_10_1, *m_1_1, *m_11_2;
+protected:
+  void setUp()
+  {
+    m_10_1 = new Complex( 10, 1 );
+    m_1_1 = new Complex( 1, 1 );
+    m_11_2 = new Complex( 11, 2 );  
+  }
+
+  void tearDown() 
+  {
+    delete m_10_1;
+    delete m_1_1;
+    delete m_11_2;
+  }
+
+  void testEquality()
+  {
+    CPPUNIT_ASSERT( *m_10_1 == *m_10_1 );
+    CPPUNIT_ASSERT( !(*m_10_1 == *m_11_2) );
+  }
+
+  void testAddition()
+  {
+    CPPUNIT_ASSERT( *m_10_1 + *m_1_1 == *m_11_2 );
+  }
+};
+
+//Name of TestCaller added to suite is a composition of the fixture name and method name
+//ie ComplexNumberTest.testEquality and ComplexNumberTest.testAddition
+
+//MACROs Writing Tests example
+CPPUNIT_TEST_SUITE( ComplexNumberTest );
+// [...]
+CPPUNIT_TEST_EXCEPTION( testDivideByZeroThrows, MathException ); //macro for test addition to suite, SPECIFY EXCEPTION TYPE
+CPPUNIT_TEST_SUITE_END();
+
+// [...]
+
+  void testDivideByZeroThrows()  //Definition of test method still needs to be written, but no asserts/tests inside
+  {
+    // The following line should throw a MathException.
+    *m_10_1 / ComplexNumber(0);
+  }
+
+
+//TESTFACTORYREGISTRY
+//Helps with adding fixture suite to test runner and inclusion of all test case headers
+//
+
+//TestFactoryRegistry is a place where suites can be registered at initialization time
+//to register add below to .cpp file
+#include <cppunit/extensions/HelperMacros.h>
+
+CPPUNIT_TEST_SUITE_REGISTRATION( ComplexNumber );
+
+//Static var of type AutoRegisterSuite is declared by macro and on construction, it will regester a TestSuiteFactory
+//into TestFactoryRegistry. The TestSuiteFactory returns the TestSuite returned by ComplexNumber::suite()
+//
+//To run tests with test runner no inclusion of fixture is required
+#include <cppunit/extensions/TestFactoryRegistry.h>
+#include <cppunit/ui/text/TestRunner.h>
+//no header files included for individual test fixtures
+
+int main( int argc, char **argv)
+{
+  CppUnit::TextUi::TestRunner runner;
+  //missing individual test suite additions
+  CppUnit::TestFactoryRegistry &registry = CppUnit::TestFactoryRegistry::getRegistry();  //instance of TestFactoryRegistry
+  runner.addTest( registry.makeTest() ); //use registry method to add new test suite containing all registered test suites
+  runner.run();
+  return 0;  //only returns if main() was successfull not if tests were. see below
+}
+
+//Better Alternate returning success on test so it can be incorporated into build process 
+
+#include <cppunit/extensions/TestFactoryRegistry.h>
+#include <cppunit/ui/text/TestRunner.h>
+
+int main( int argc, char **argv)
+{
+  CppUnit::TextUi::TestRunner runner;
+  CppUnit::TestFactoryRegistry &registry = CppUnit::TestFactoryRegistry::getRegistry();
+  runner.addTest( registry.makeTest() );
+  bool wasSucessful = runner.run( "", false );  //TestRunner::run() returns a boolean
+  return wasSucessful;
+}
