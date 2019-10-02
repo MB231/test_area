@@ -43,13 +43,17 @@ OBJS := $(ALL_SRC_F:%=$(BUILD_DIR)/%.o)
 
 
 #-D is macro define flag and g3 is highest debug inclusion level
-DEBUG_FLAGS = -D DEBUG -g3
-LFLAGS = 
+DEBUG_FLAGS = -D DEBUG -g3 --coverage
+#linker flags for CPP secondary step with .d files(compiler list of 
+#dependencies for that .o file)
+#CPP_LFLAGS = -pg -lcppunit -ftest-coverage -fprofile-arcs -lgcov #-fprofile-abs-path(not a feature until gcc 7)
+CPP_LFLAGS =
 #max optimization with pedantic (ISOC/C++ and stops forbidden extensions)
 #and strict aliasing(pointers to same address warning)
-CFLAGS =  -O3 -Wall -Wextra -Wpedantic -Wstrict-aliasing
+CFLAGS =  -O3 -Wall -Wextra -Wpedantic -Wstrict-aliasing -g3 -pg
+
 CC = gcc -std=gnu11
-CPP = g++ -std=c++11
+CPP = g++ -std=c++11 #-ftest-coverage -fprofile-arcs #-fprofile-abs-path (not a feature until gcc 7)
 #MMD(preprocessor flag)-Instead of outputting preprocessor result, generates a 
 #rule for make describing dependencies of the main source file. MMD specifies 
 #only user header files no system header files like -M. Generates as *.d file.
@@ -60,7 +64,8 @@ CPP = g++ -std=c++11
 CPPFLAGS ?= $(CFLAGS) -MMD -MP
 
 #INCLUDES
-LIB_FLAGS = -lCppUnit -lCppUnitRunner
+#Only C libraries required as CPP libraries are linked in dependency step
+CLIB_FLAGS = 
 #gets list of directory names in src directory
 INC_DIRS :=$(shell find $(SRC_DIR) -type d)
 #Adds the -I flag to the INC_DIRS list so var is not so nested and = is not need
@@ -79,7 +84,7 @@ DEPS := $(OBJS:.o=.d)
 
 #links and puts target in build directory
 $(BUILD_DIR)/$(TARGET_EXEC) : $(OBJS)
-	$(CPP) $(OBJS) -o $@ $(LFLAGS)
+	$(CPP) $(OBJS) -o $@ $(CPP_LFLAGS)
 
 
 #DEPENDENCY RULES
@@ -94,7 +99,7 @@ $(BUILD_DIR)/$(TARGET_EXEC) : $(OBJS)
 #C version
 $(BUILD_DIR)/%.c.o : %.c
 	$(__MKDIR) $(dir $@)
-	$(CC) $(CFLAGS) $(LIB_FLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) $(CLIB_FLAGS) -c $< -o $@
 
 #assembly version
 $(BUILD_DIR)/%.a.o : %.s
