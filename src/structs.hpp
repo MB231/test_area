@@ -52,6 +52,10 @@ int withDefine(void) {
     }
 }
 
+// NOTE u_int8_t used for clearity, better to use:
+typedef u_int8_t volatile device_register;
+// This allows the struct to have descriptive elements with volatile and size
+
 // no name here is needed only last instantiation for anonymous struct
 // typedef struct {
 typedef struct GPIO_t {
@@ -102,20 +106,20 @@ int LEDonOFF(void) {
 //
 typedef struct {
     u_int8_t HEADER = 0x08;                 // SET_CLEAR_CMD
-    u_int8_t BLANK1[10];                    // blank indexes
+    u_int8_t BLANK1[10];                    // blank indexes ***REMEMBER ARRAY SIZE NOT ELEMENT #***
     u_int8_t SETPIN;                        // Pins to set
     u_int8_t CLEARPIN;                      // Pins to clear
-    u_int8_t BLANK2[3];                     // blank indexes
+    u_int8_t BLANK2[1];                     // blank indexes ***REMEMBER ARRAY SIZE NOT ELEMENT #***
 } __attribute__((packed)) SET_CLEAR_CMD;    // use this or compiler flags to prevent packing ruining offset
 
 typedef struct {
     u_int8_t HEADER = 0x10;              // SET_CLEAR_CMD
-    u_int8_t BLANK1[3];                  // blank indexes
+    u_int8_t BLANK1[3];                  // blank indexes ***REMEMBER ARRAY SIZE NOT ELEMENT #***
     u_int8_t IO_BMAP;                    // Pins to set
     u_int8_t ALT_SET;                    // Pins to clear
     u_int8_t IO_DFLT;                    // Pins to clear
     u_int8_t ALT_CONFIG;                 // Pins to clear
     u_int8_t BAUD_H;                     // Pins to clear
     u_int8_t BAUD_L;                     // Pins to clear
-    u_int8_t BLANK2[6];                  // blank indexes
+    u_int8_t BLANK2[4];                  // blank indexes***REMEMBER ARRAY SIZE NOT ELEMENT #***
 } __attribute__((packed)) CONFIG_CMD;    // use this or compiler flags to prevent packing ruining offset

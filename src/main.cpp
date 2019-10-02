@@ -36,21 +36,42 @@ int main() {
             cout << "GPIO07 FAIL";
         }
         if (GPIOCLASS::GPIO_ALL == ( GPIOCLASS )0xFF) {
-            cout << "GPIOIALL PASS" << endl;
+            cout << "GPIO_ALL PASS" << endl;
         } else {
             cout << "GPIO_ALL FAIL";
         }
-    cout << "struct testing" << endl;
-    u_int8_t setBuffer[15];
-    u_int8_t cmdBuffer[15];
 
-    volatile SET_CLEAR_CMD *const set    = ( SET_CLEAR_CMD * )&setBuffer[0];
+    cout << "\n\n\nstruct testing" << endl;
+    u_int8_t setBuffer[16] = { 0 };
+    u_int8_t cmdBuffer[16] = { 0 };
+
+    // ALWAYS ZERO BUFFERS
+
+    volatile SET_CLEAR_CMD *const set    = ( SET_CLEAR_CMD * )setBuffer;
     volatile CONFIG_CMD *const    config = ( CONFIG_CMD * )cmdBuffer;
 
-    set->SETPIN = (GPIO01 | GPIO02);
-    set->CLEARPIN = (GPIO03 | GPIO04);
+    setBuffer[11] = 0x80;
+    setBuffer[12] = 0x08;
+    // write to setBuffer using struct as map
+    set->HEADER   = 0x80;
+    set->SETPIN   = (GPIO00 | GPIO01);
+    set->CLEARPIN = (GPIO02 | GPIO03);
+    // check if written correctly
+    if (setBuffer[11] != 0x03) {
+        cout << "buffer 11 write FAIL" << endl;
+    }
+    if (setBuffer[12] != 0x0c) {
+        cout << "buffer 12 write FAIL" << endl;
+    }
 
-    cout << "setpin(0x03): " << hex << setBuffer[11] << endl;
-    cout << "clearpin(0x0C): " << hex << setBuffer[12] << endl;
+    cout << "read from setBuffer[11] 0x03 expected " << hex << ( int )setBuffer[11] << endl;
+    cout << "read from struct->SETPIN 0x03 expected " << hex << ( int )set->SETPIN << endl;
+    cout << "read from setBuffer[12] 0x0c expected " << hex << ( int )setBuffer[12] << endl;
+    cout << "read from struct->CLEARPIN 0x0c expected " << hex << ( int )set->CLEARPIN << endl;
+    cout << "read from setbuffer[0] 0x80 expected " << hex << ( int )setBuffer[0] << endl;
+    cout << "dump buffer" << endl;
+    for (int i = 0; i < 15; i++) {
+        cout << hex << ( int )setBuffer[i] << ": is element " << dec << i << endl;
+    }
     return 0;
 }
