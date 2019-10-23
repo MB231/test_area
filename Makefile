@@ -47,7 +47,7 @@ DEBUG_FLAGS = -D DEBUG -g3 --coverage
 #linker flags for CPP secondary step with .d files(compiler list of 
 #dependencies for that .o file)
 #CPP_LFLAGS = -pg -lcppunit -ftest-coverage -fprofile-arcs -lgcov #-fprofile-abs-path(not a feature until gcc 7)
-CPP_LFLAGS =
+CPP_LFLAGS = -lcppunit
 #max optimization with pedantic (ISOC/C++ and stops forbidden extensions)
 #and strict aliasing(pointers to same address warning)
 CFLAGS =  -O3 -Wall -Wextra -Wpedantic -Wstrict-aliasing -g3 -pg
