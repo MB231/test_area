@@ -47,13 +47,13 @@ DEBUG_FLAGS = -D DEBUG -g3 --coverage
 #linker flags for CPP secondary step with .d files(compiler list of 
 #dependencies for that .o file)
 #CPP_LFLAGS = -pg -lcppunit -ftest-coverage -fprofile-arcs -lgcov #-fprofile-abs-path(not a feature until gcc 7)
-CPP_LFLAGS = -lcppunit
+CPP_LFLAGS =
 #max optimization with pedantic (ISOC/C++ and stops forbidden extensions)
 #and strict aliasing(pointers to same address warning)
 CFLAGS =  -O3 -Wall -Wextra -Wpedantic -Wstrict-aliasing -g3 -pg
 
-CC = gcc -std=gnu11
-CPP = g++ -std=c++11 #-ftest-coverage -fprofile-arcs #-fprofile-abs-path (not a feature until gcc 7)
+CC = gcc -std=gnu17
+CPP = g++ -std=c++17 #-ftest-coverage -fprofile-arcs #-fprofile-abs-path (not a feature until gcc 7)
 #MMD(preprocessor flag)-Instead of outputting preprocessor result, generates a 
 #rule for make describing dependencies of the main source file. MMD specifies 
 #only user header files no system header files like -M. Generates as *.d file.
