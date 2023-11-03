@@ -86,10 +86,10 @@ void curlcmd(std::string url, std::vector<ReplyMsg> &reply) {
 
         // This worked by removing all back slashes AND the starting and ending double quotes. Brackets removed since I
         // happened to wrap all of my json objects in an array.
-        //readBuffer.erase(readBuffer.end()-1); readBuffer.erase(readBuffer.begin());
-        //readBuffer.erase(std::remove(readBuffer.begin(), readBuffer.end(), '\\'), readBuffer.end());
-        //readBuffer.erase(std::remove(readBuffer.begin(), readBuffer.end(), '['), readBuffer.end());
-        //readBuffer.erase(std::remove(readBuffer.begin(), readBuffer.end(), ']'), readBuffer.end());
+        readBuffer.erase(readBuffer.end()-1); readBuffer.erase(readBuffer.begin());
+        readBuffer.erase(std::remove(readBuffer.begin(), readBuffer.end(), '\\'), readBuffer.end());
+        readBuffer.erase(std::remove(readBuffer.begin(), readBuffer.end(), '['), readBuffer.end());
+        readBuffer.erase(std::remove(readBuffer.begin(), readBuffer.end(), ']'), readBuffer.end());
 
         // ouput c strings from string in case to compare
         std::cout <<"\n\n"<< readBuffer.c_str()  <<"\n\n retVal: "<< retVal<< std::endl;
