@@ -1,0 +1,3 @@
+/home/mbarneko/currentWorking/test_area/cmake_builds/nlohmann_conan_test/build/CMakeFiles/test.dir
+/home/mbarneko/currentWorking/test_area/cmake_builds/nlohmann_conan_test/build/CMakeFiles/edit_cache.dir
+/home/mbarneko/currentWorking/test_area/cmake_builds/nlohmann_conan_test/build/CMakeFiles/rebuild_cache.dir
