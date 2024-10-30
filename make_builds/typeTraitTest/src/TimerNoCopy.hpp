@@ -31,6 +31,7 @@
 
 #include <chrono>
 #include <cstdint>
+#include <iostream>
 
 /*!
     \brief Wraps up a timer to track a specific timeout
@@ -57,30 +58,33 @@ class TimerNoCopy {
         void stop();
 
 
-    // prevents implicit declaration of default move constructor;
+    // If defined it will prevent implicit declaration of default move constructor;
     // however, the class is still move-constructible because its
     // copy constructor can bind to an rvalue argument
     // TimerNoCopy(const TimerNoCopy&) {}
     TimerNoCopy(const TimerNoCopy& other) = delete; // copy constructor
 
-    // Not move-constructible since the lvalue reference
+    // If not move-constructible the lvalue reference
     // can't bind to the rvalue argument
-    // TimerNoCopy(TimerNoCopy&) {}
-    TimerNoCopy(TimerNoCopy&& other) = delete; // move constructor
+    //TimerNoCopy(TimerNoCopy&& other) = default;
+    // move constructor example. no string in TimerNoCopy but if you had something nontrivial you could do this
+    //TimerNoCopy(TimerNoCopy&& other) noxcept
+    //: cstring(std::exchange(other.cstring, nullptr)) {
+    //    std::cout << "TimerNoCopy move constructor called\n";
+    //}
 
-    //TimerNoCopy(TimerNoCopy&& other) noexcept // move constructor
-    //: cstring(std::exchange(other.cstring, nullptr))
-    //{}
  
     TimerNoCopy& operator=(const TimerNoCopy& other) = delete; // copy assignment
  
     // Define non default prevents implicit declaration of default move assignment operator
     // however, the class is still move-assignable because its
     // copy assignment operator can bind to an rvalue argument
-    // Ex non default: TimerNoCopy& operator=(const TimerNoCopy&) { return *this; }
+    TimerNoCopy& operator=(TimerNoCopy&&) noexcept{
+        std::cout << "TimerNoCopy move assign called\n";
+        return *this;
+    }
 
-    TimerNoCopy& operator=(TimerNoCopy&& other) = default; // move assignment
-
+    // Example of move with that same cstring for a nontrivial example
     //TimerNoCopy& operator=(TimerNoCopy&& other) noexcept // move assignment
     //{
     //    std::swap(cstring, other.cstring);

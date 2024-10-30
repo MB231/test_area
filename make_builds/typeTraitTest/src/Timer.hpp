@@ -26,8 +26,8 @@
     \brief File to define the api and class structure for a Timer class
 */
 
-#ifndef TIMER
-#define TIMER
+#ifndef TIMER_HPP
+#define TIMER_HPP
 
 #include <chrono>
 #include <cstdint>
@@ -35,7 +35,7 @@
 /*!
     \brief Wraps up a timer to track a specific timeout
 */
-class Timer{
+class Timer {
     public:
         using Ms = std::chrono::duration<int, std::milli>; /// typedef for milliseconds
 
@@ -56,12 +56,10 @@ class Timer{
 
         void stop();
 
-
     private:
     std::chrono::time_point<std::chrono::steady_clock> startTime; /// Time point to represent the time the timer starts
     std::chrono::duration<int, std::milli> timeoutInterval; /// The timeout interval in milliseconds
     bool active; /// flag to check the activity of the Timer
 };
 
-
-#endif // TIMER
+#endif // TIMER_HPP
